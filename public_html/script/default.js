@@ -12,7 +12,7 @@ function formatNumber(rate, unit /*= 'h/s'*/) {
 		return Round(rate * 1000000000, 2) + " n" + unit;
 	}
 	else if (rate < 0.0007) {
-		return Round(rate * 1000000, 2) + " µ" + unit;
+		return Round(rate * 1000000, 2) + " ï¿½" + unit;
 	}
 	else if (rate < 0.7) {
 		return Round(rate * 1000, 2) + " m" + unit;
@@ -74,10 +74,6 @@ angular
 
   		return false;
   	};
-
-  	$http.get('/api/user').then(function (res) {
-  		$scope.user = res.data;
-  	});
 
   	$http.get('/api/titles').then(function (res) {
   		titles = [];

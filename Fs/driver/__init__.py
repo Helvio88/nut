@@ -121,8 +121,6 @@ def openDir(url):
 def openFile(url, mode='rb'):
 	return Fs.driver.registry.get(getScheme(url)).openFile(url, mode)
 
-
-customSchemes = ['gdrive:']
 def join(url1, url2):
 	if not url1:
 		return url2
@@ -142,12 +140,6 @@ def join(url1, url2):
 	if Fs.driver.registry.isNative(url1):
 		return os.path.join(url1, url2).replace('/', '\\')
 	return urllib.parse.urljoin(url1, url2)
-
-def isWindows():
-	if "win" in sys.platform[:3].lower():
-		return True
-	else:
-		return False
 
 def cleanPath(path=None):
 	if not path:
@@ -170,8 +162,6 @@ def cleanPath(path=None):
 				'/'.join(bits)
 			)
 		)
-	elif isWindows():
-		path = os.path.abspath(os.path.join(drive+'/', '/'.join(bits)))
 	else:
 		path = os.path.abspath('/'.join(bits))
 

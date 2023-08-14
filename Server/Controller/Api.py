@@ -1,4 +1,3 @@
-from nut import Titles
 import json
 from nut import Titles
 from nut import Status
@@ -75,10 +74,6 @@ def success(request, response, s):
 def error(request, response, s):
 	response.headers['Content-Type'] = 'application/json'
 	response.write(json.dumps({'success': False, 'result': s}))
-
-def getUser(request, response):
-	response.headers['Content-Type'] = 'application/json'
-	response.write(json.dumps(request.user.__dict__))
 
 def getScan(request, response):
 	success(request, response, nut.scan())
@@ -446,30 +441,12 @@ def getDownload(request, response, start=None, end=None):
 	if response.bytesSent == 0:
 		response.write(b'')
 
-
-def isWindows():
-	if "win" in sys.platform[:3].lower():
-		return True
-	else:
-		return False
-
 def listDrives():
 	drives = []
 	for label, _ in Config.paths.mapping().items():
 		drives.append(label)
 
 	if not Config.server.enableLocalDriveAccess:
-		return drives
-
-	if isWindows():
-		import string
-		import ctypes
-		kernel32 = ctypes.windll.kernel32
-		bitmask = kernel32.GetLogicalDrives()
-		for letter in string.ascii_uppercase:
-			if bitmask & 1:
-				drives.append(letter)
-			bitmask >>= 1
 		return drives
 
 	drives.append('root')
