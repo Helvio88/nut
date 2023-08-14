@@ -10,7 +10,6 @@ from os import listdir
 import re
 from nut import Print
 import urllib
-from nut import Users
 from nut import Watcher
 import base64
 from urllib.parse import urlparse
@@ -269,16 +268,6 @@ class NutHandler(http.server.BaseHTTPRequestHandler):
 			request.setHead(True)
 			response.setHead(True)
 
-			if self.headers['Authorization'] is None:
-				return Response401(request, response)
-
-			id, password = base64.b64decode(self.headers['Authorization'].split(' ')[1]).decode().split(':')
-
-			request.user = Users.auth(id, password, self.client_address[0])
-
-			if not request.user:
-				return Response401(request, response)
-
 			try:
 				if len(request.bits) > 0 and request.bits[0] in mappings:
 					i = request.bits[1]
@@ -293,16 +282,6 @@ class NutHandler(http.server.BaseHTTPRequestHandler):
 	def do(self, verb='get'):
 		request = NutRequest(self)
 		with NutResponse(self) as response:
-			if self.headers['Authorization'] is None:
-				return Response401(request, response)
-
-			id, password = base64.b64decode(self.headers['Authorization'].split(' ')[1]).decode().split(':')
-
-			request.user = Users.auth(id, password, self.client_address[0])
-
-			if not request.user:
-				return Response401(request, response)
-
 			try:
 				if not route(request, response, verb):
 					self.handleFile(request, response)
