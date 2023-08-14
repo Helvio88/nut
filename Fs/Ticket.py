@@ -215,15 +215,3 @@ class Ticket(File):
 		except BaseException as e:
 			Print.info(tabs + 'titleKeyDec = ' + str(e))
 
-		'''
-		try:
-			if blockchain.verifyKey(titleId, titleKey):
-				tkeyStatus = 'VERIFIED'
-			else:
-				tkeyStatus = 'BAD KEY'
-		except BaseException as e:
-			tkeyStatus = 'UNKNOWN - ' + str(e)
-			raise
-
-		Print.info(tabs + 'titleKeyStatus = ' + tkeyStatus)
-		'''

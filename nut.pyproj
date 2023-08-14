@@ -11,7 +11,6 @@
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--usb</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
@@ -75,7 +74,6 @@
     <Compile Include="gui\tabs.py" />
     <Compile Include="gui\__init__.py" />
     <Compile Include="nut\aes128.py" />
-    <Compile Include="nut\blockchain.py" />
     <Compile Include="nut\Config.py" />
     <Compile Include="nut\Hex.py" />
     <Compile Include="nut\Hook.py" />
@@ -86,7 +84,6 @@
     <Compile Include="nut\Status.py" />
     <Compile Include="nut\Title.py" />
     <Compile Include="nut\Titles.py" />
-    <Compile Include="nut\Usb.py" />
     <Compile Include="nut\Users.py">
       <SubType>Code</SubType>
     </Compile>

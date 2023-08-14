@@ -19,7 +19,6 @@ from Fs.Pfs0 import Pfs0
 from Fs.Nca import Nca
 from Fs.IndexedFile import IndexedFile
 import shutil
-from nut import blockchain
 
 MEDIA_SIZE = 0x200
 
@@ -117,7 +116,7 @@ class Nsp(Pfs0, IndexedFile):
 
 			titleKey = t.getTitleKeyBlock()
 			titleKeyStr = format(titleKey, 'X').zfill(32)
-			if titleKey != 0 and blockchain.verifyKey(self.titleId, titleKeyStr):
+			if titleKey != 0:
 				Print.info(self.titleId + ' key = ' + titleKeyStr)
 				self.title().setKey(titleKeyStr)
 				self.setHasValidTicket(True)

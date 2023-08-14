@@ -3,7 +3,6 @@ import Fs.Type
 from binascii import hexlify as hx, unhexlify as uhx
 from nut import Print
 from nut import Keys
-from nut import blockchain
 
 class MetaEntry:
 	def __init__(self, f):

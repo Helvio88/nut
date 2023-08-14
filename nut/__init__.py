@@ -35,8 +35,6 @@ try:
 except BaseException:
 	hasCdn = False
 
-from ganymede import Ganymede
-
 isInitTitles = False
 isInitFiles = False
 hasScanned = False
@@ -289,26 +287,6 @@ def compressWorker(q, level, output, totalStatus):
 		except BaseException as e:
 			Print.info('COMPRESS WORKER EXCEPTION: ' + str(e))
 			traceback.print_exc(file=sys.stdout)
-
-def ganymede(config):
-	initTitles()
-	initFiles()
-
-	with Ganymede(config) as g:
-		for k, t in Titles.items():
-			try:
-				if not t.isActive(skipKeyCheck=True):
-					continue
-
-				lastestNsz = t.getLatestNsz()
-
-				if lastestNsz is None:
-					continue
-
-				g.push(t.id, lastestNsz.version, lastestNsz.path, lastestNsz.size)
-
-			except BaseException:
-				raise
 
 def compressAll(level=19):
 	initTitles()

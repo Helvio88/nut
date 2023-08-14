@@ -11,7 +11,6 @@ import socket
 import struct
 import time
 import nut
-from nut import blockchain
 import urllib.parse
 import requests
 import sys
@@ -738,22 +737,6 @@ def getUpdateAllVersions(request, response):
 def getScrapeShogun(request, response):
 	nut.scrapeShogun()
 	return success(request, response, "Fin")
-
-def getSubmitKey(request, response):
-	titleId = request.bits[2]
-	titleKey = request.bits[3]
-
-	try:
-		if blockchain.blockchain.suggest(titleId, titleKey):
-			return success(request, response, "Key successfully added")
-		else:
-			return error(request, response, "Key validation failed")
-	except LookupError as e:
-		error(request, response, str(e))
-	except OSError as e:
-		error(request, response, str(e))
-	except BaseException as e:
-		error(request, response, str(e))
 
 
 def postTinfoilSetInstalledApps(request, response):

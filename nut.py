@@ -46,11 +46,6 @@ try:
 except BaseException:
 	hasCdn = False
 
-try:
-	from nut import blockchain
-except BaseException:
-	raise
-
 def logMissingTitles(file):
 	nut.initTitles()
 	nut.initFiles()
@@ -148,15 +143,6 @@ def unlockAll(copy=False):
 			Print.info('error unlocking: ' + str(e))
 			traceback.print_exc(file=sys.stdout)
 
-def exportVerifiedKeys(fileName):
-	nut.initTitles()
-	with open(fileName, 'w') as f:
-		f.write('id|key|version\n')
-		for tid, key in blockchain.blockchain.export().items():
-			title = Titles.get(tid)
-			if title and title.rightsId:
-				f.write(str(title.rightsId) + '|' + str(key) + '|' + str(title.version) + '\n')
-
 def exportKeys(fileName):
 	nut.initTitles()
 	with open(fileName, 'w') as f:
@@ -164,24 +150,6 @@ def exportKeys(fileName):
 		for tid, title in Titles.items():
 			if title and title.rightsId and title.key and title.isActive():
 				f.write(str(title.rightsId) + '|' + str(title.key) + '|' + str(title.version) + '\n')
-
-def submitKeys():
-	for id, t in Titles.items():
-		if t.key and len(t.getFiles()) > 0:
-			try:
-				#blockchain.blockchain.suggest(t.id, t.key)
-				if not blockchain.verifyKey(t.id, t.key):
-					Print.error('Key verification failed for %s / %s' % (str(t.id), str(t.key)))
-					for f in t.getFiles():
-						f.hasValidTicket = False
-						f.move()
-			except LookupError as e:
-				Print.info(str(e))
-			except OSError as e:
-				Print.info(str(e))
-			except BaseException as e:
-				Print.info(str(e))
-				raise
 
 def genTinfoilTitles():
 	nut.initTitles(verify=False)
@@ -391,7 +359,6 @@ if __name__ == '__main__':
 
 			parser = argparse.ArgumentParser()
 			parser.add_argument('file', nargs='*')
-			parser.add_argument('-g', '--ganymede', help='ganymede config file')
 			parser.add_argument('-i', '--info', help='show info about title or file')
 			parser.add_argument('--depth', type=int, default=1, help='max depth for file info and extraction')
 			parser.add_argument('-I', '--verify-title-key', nargs=2, help='verify title key TID TKEY')
@@ -419,14 +386,9 @@ if __name__ == '__main__':
 			parser.add_argument('-M', '--missing', help='export title database of titles you have not downloaded in csv format')
 			parser.add_argument('--silent', action="store_true", help='Suppress stdout/stderr output')
 			parser.add_argument('--json', action="store_true", help='JSON output')
-			parser.add_argument('--usb', action="store_true", help='Run usb daemon')
 			parser.add_argument('-S', '--server', action="store_true", help='Run server daemon')
 			parser.add_argument('-m', '--hostname', help='Set server hostname')
 			parser.add_argument('-p', '--port', type=int, help='Set server port')
-			parser.add_argument('-b', '--blockchain', action="store_true", help='run blockchain server')
-			parser.add_argument('-k', '--submit-keys', action="store_true", help='Submit all title keys to blockchain')
-			parser.add_argument('-K', '--export-verified-keys', help='Exports verified title keys from blockchain')
-			parser.add_argument('--export-keys', help='Exports title keys from blockchain')
 			parser.add_argument('-P', '--pull', action="store_true", help='Sync files from remote locations')
 			parser.add_argument('--refresh-regions', action="store_true", help='Refreshes the region and language mappings in Nut\'s DB')
 			parser.add_argument('--import-region', help='Localizes Nut\'s DB to the specified region')
@@ -637,11 +599,6 @@ if __name__ == '__main__':
 							Print.info(game.isUpdateAvailable())
 				exit(0)
 
-			if args.submit_keys:
-				nut.initTitles()
-				nut.initFiles()
-				submitKeys()
-
 			if args.refresh_regions:
 				nut.refreshRegions()
 
@@ -672,14 +629,6 @@ if __name__ == '__main__':
 					language = args.language or 'en'
 					print(json.dumps(cdn.Shogun.scrapeTitle(int(args.scrape_nsuid), region=region, language=language, force=True).__dict__))
 					Titles.saveRegion(region, language)
-
-			if args.usb:
-				try:
-					from nut import Usb
-				except BaseException as e:
-					Print.error('pip3 install pyusb, required for USB coms: ' + str(e))
-				nut.scan()
-				Usb.daemon()
 
 			if args.scan:
 				nut.initTitles()
@@ -750,15 +699,6 @@ if __name__ == '__main__':
 						s.add()
 					s.close()
 				Nsps.save()
-
-
-			if args.verify_title_key:
-				nut.initTitles()
-				nut.initFiles()
-				if blockchain.verifyKey(args.verify[0], args.verify[1]):
-					Print.info('Title key is valid')
-				else:
-					Print.info('Title key is INVALID %s - %s' % (args.verify[0], args.verify[1]))
 
 			if args.restore:
 				nut.initTitles()
@@ -997,26 +937,8 @@ if __name__ == '__main__':
 				nut.initFiles()
 				Server.run()
 
-			if args.blockchain:
-				nut.initTitles()
-				nut.initFiles()
-				try:
-					import blockchain
-				except BaseException:
-					pass
-				blockchain.run()
-
-			if args.export_verified_keys:
-				exportVerifiedKeys(args.export_verified_keys)
-
-			if args.export_keys:
-				exportKeys(args.export_keys)
-
 			if args.organize_ncas:
 				organizeNcas(args.organize_ncas)
-
-			if args.ganymede:
-				nut.ganymede(args.ganymede)
 
 			Status.close()
 
